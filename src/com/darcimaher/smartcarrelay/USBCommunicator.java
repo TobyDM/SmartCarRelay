@@ -13,20 +13,20 @@ import lejos.nxt.comm.USB;
 import lejos.nxt.comm.USBConnection;
 
 
-public class USBCom {
+public class USBCommunicator {
 	
-	private static USBCom instance;
+	private static USBCommunicator instance;
 	private USBConnection con;
 	private DataOutputStream dos;
 	private DataInputStream dis;
 	private boolean isConnected;
 	
-	private USBCom(){
+	private USBCommunicator(){
 		connect();
 	}
 	
-	public static USBCom getInstance(){
-		if(instance == null) instance = new USBCom();
+	public static USBCommunicator getInstance(){
+		if(instance == null) instance = new USBCommunicator();
 		return instance;
 	}
 	
@@ -87,7 +87,7 @@ public class USBCom {
 	}
 	
 	private synchronized void connect(){
-		LCD.drawString("waiting", 0, 0);
+		LCD.drawString("Waiting for USB...", 0, 0);
 		con = USB.waitForConnection();
 		dos = con.openDataOutputStream();
 		dis = con.openDataInputStream();
