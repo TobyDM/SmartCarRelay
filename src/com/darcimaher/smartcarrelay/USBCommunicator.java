@@ -8,7 +8,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import lejos.nxt.LCD;
 import lejos.nxt.comm.USB;
 import lejos.nxt.comm.USBConnection;
 
@@ -40,9 +39,10 @@ public class USBCommunicator {
 			dos.flush();
 		} catch (IOException e) {
 			isConnected = false;
-			LCD.drawString("Failed to send", 0, 0);
+			
+			System.out.println("USB Failed to send");
 			stopConnection();
-			connect();
+//			connect();
 		}
 	}
 	
@@ -53,9 +53,10 @@ public class USBCommunicator {
 			return s;
 		} catch (IOException e) {
 			isConnected = false;
-			LCD.drawString("Failed to receive", 0, 0);
+			
+			System.out.println("USB Failed to receive");
 			stopConnection();
-			connect();
+//			connect();
 			return "FAIL";
 		}
 	}
@@ -66,9 +67,10 @@ public class USBCommunicator {
 			dos.flush();
 		} catch (IOException e) {
 			isConnected = false;
-			LCD.drawString("Failed to send", 0, 0);
+			
+			System.out.println("USB Failed to send");
 			stopConnection();
-			connect();
+//			connect();
 		}
 	}
 	
@@ -79,29 +81,32 @@ public class USBCommunicator {
 			return i;
 		} catch (IOException e) {
 			isConnected = false;
-			LCD.drawString("Failed to receive", 0, 0);
+			
+			System.out.println("USB Failed to receive");
 			stopConnection();
-			connect();
+//			connect();
 			return -1;
 		}
 	}
 	
 	private synchronized void connect(){
-		LCD.drawString("Waiting for USB...", 0, 0);
+		
+		System.out.println("USB Waiting for USB...");
 		con = USB.waitForConnection();
 		dos = con.openDataOutputStream();
 		dis = con.openDataInputStream();
-		LCD.drawString("Connected", 0, 0);
+		
+		System.out.println("USB Connected");
 		isConnected = true;
 	}
 	
-	private synchronized void stopConnection(){
+	public synchronized void stopConnection(){
 		try {
 			dos.close();
 			dis.close();
 			con.close();
 		} catch (IOException e) {
-			LCD.drawString("Failed to close", 0, 0);
+			System.out.println("USB Failed to close");
 		}
 	}
 }

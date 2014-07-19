@@ -10,7 +10,6 @@ import java.io.IOException;
 
 import javax.bluetooth.RemoteDevice;
 
-import lejos.nxt.LCD;
 import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
 
@@ -37,7 +36,7 @@ public class BluetoothCommunicator {
 			isConnected = false;
 			stopConnection();
 			connect();
-			LCD.drawString("failed to send", 0, 3);
+			System.out.println("Bluetooth failed to send");
 		}
 	}
 
@@ -49,7 +48,7 @@ public class BluetoothCommunicator {
 			isConnected = false;
 			stopConnection();
 			connect();
-			LCD.drawString("failed to send", 0, 3);
+			System.out.println("Bluetooth failed to send");
 		}
 	}
 
@@ -59,7 +58,7 @@ public class BluetoothCommunicator {
 			s = dis.readUTF();
 			return s;
 		} catch (IOException e) {
-			LCD.drawString("failed to receive", 0, 3);
+			System.out.println("Bluetooth failed to receive");
 			isConnected = false;
 			stopConnection();
 			connect();
@@ -73,18 +72,16 @@ public class BluetoothCommunicator {
 			dis.close();
 			btc.close();
 		} catch (IOException e) {
-			LCD.drawString("failed to close", 0, 3);
+			System.out.println("Bluetooth failed to close");
 		}
 	}
 
 	public static void connect(String name) {
-		LCD.drawString("Connecting...", 0, 0);
-		LCD.refresh();
+		System.out.println("Bluetooth Connecting...");
 		RemoteDevice btrd = Bluetooth.getKnownDevice(name);
 		if (btrd == null) {
-			LCD.clear();
-			LCD.drawString("No such device", 0, 3);
-			LCD.refresh();
+			
+			System.out.println("Bluetooth No such device");
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {
@@ -94,9 +91,8 @@ public class BluetoothCommunicator {
 		}
 		btc = Bluetooth.connect(btrd);
 		if (btc == null) {
-			LCD.clear();
-			LCD.drawString("Connect fail", 0, 3);
-			LCD.refresh();
+			
+			System.out.println("Bluetooth Connect fail");
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {
@@ -104,9 +100,8 @@ public class BluetoothCommunicator {
 			}
 
 		} else {
-			LCD.clear();
-			LCD.drawString("Connected", 0, 3);
-			LCD.refresh();
+			
+			System.out.println("Bluetooth Connected");
 			isConnected = true;
 			dis = btc.openDataInputStream();
 			dos = btc.openDataOutputStream();
@@ -114,9 +109,9 @@ public class BluetoothCommunicator {
 	}
 
 	public static void connect() {
-		LCD.drawString("Waiting for Bluetooth...", 0, 3);
+		System.out.println("Bluetooth Waiting for Bluetooth...");
 		btc = Bluetooth.waitForConnection();
-		LCD.drawString("Connected  ", 0, 3);
+		System.out.println("Bluetooth Connected  ");
 		isConnected = true;
 		dis = btc.openDataInputStream();
 		dos = btc.openDataOutputStream();

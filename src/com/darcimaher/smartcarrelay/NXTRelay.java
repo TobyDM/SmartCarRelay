@@ -4,26 +4,56 @@
 
 package com.darcimaher.smartcarrelay;
 
-import lejos.nxt.LCD;
+import lejos.nxt.Button;
+import lejos.nxt.ButtonListener;
 
 public class NXTRelay {
 
-	private USBCommunicator relayToRemoteUSBCommunicator;
+	private final USBCommunicator relayToRemoteUSBCommunicator;
+	private boolean keepLooping;
 
 	public NXTRelay() {
 
-		relayToRemoteUSBCommunicator = USBCommunicator.getInstance();
+		keepLooping = true;
+
+		Button.ESCAPE.addButtonListener(new ButtonListener() {
+
+			@Override
+			public void buttonReleased(Button b) {
+			}
+
+			@Override
+			public void buttonPressed(Button b) {
+				keepLooping = false;
+				closeOurConnections();
+			}
+		});
+
+		this.relayToRemoteUSBCommunicator = USBCommunicator.getInstance();
 		BluetoothCommunicator.connect();
-		
-		while (relayToRemoteUSBCommunicator.isConnected()
+
+		while (keepLooping && relayToRemoteUSBCommunicator.isConnected()
 				&& BluetoothCommunicator.getIsConnected()) {
+
 			// This will WAIT for a command.
-			int commandReceivedFromTheRemote = relayToRemoteUSBCommunicator.receiveInt();
-			LCD.drawString("Sending to car: ", 0, 4);
-			LCD.drawInt(commandReceivedFromTheRemote, 1, 5);
-			// Send to the car.
-			BluetoothCommunicator.sendInt(commandReceivedFromTheRemote);
+			int commandReceivedFromTheRemote = relayToRemoteUSBCommunicator
+					.receiveInt();
+			if (keepLooping) {
+				System.out.println("Sending: " + commandReceivedFromTheRemote);
+				// Send to the car.
+				BluetoothCommunicator.sendInt(commandReceivedFromTheRemote);
+			}
 		}
+
+	}
+
+	private void closeOurConnections() {
+
+		if (this.relayToRemoteUSBCommunicator != null) {
+			this.relayToRemoteUSBCommunicator.stopConnection();
+		}
+
+		BluetoothCommunicator.stopConnection();
 
 	}
 
@@ -72,6 +102,10 @@ public class NXTRelay {
 	// }
 
 	public static void main(String[] args) {
+
+		System.out.println("Press any key to start.");
+		Button.waitForAnyPress();
+
 		new NXTRelay();
 	}
 }
